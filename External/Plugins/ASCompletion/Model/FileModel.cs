@@ -6,6 +6,7 @@ using System.IO;
 using ASCompletion.Context;
 using System.Text.RegularExpressions;
 using PluginCore.Helpers;
+using ProtoBuf;
 
 namespace ASCompletion.Model
 {
@@ -26,22 +27,31 @@ namespace ASCompletion.Model
         }
     }
 
+    [ProtoContract(SkipConstructor=true)]
     public class ASMetaData: IComparable
     {
         static private Regex reNameTypeParams = 
             new Regex("([^\"'\\s]+)\\s*=\\s*[\"']([^\"']+)[\"'],{0,1}\\s*", RegexOptions.Compiled);
 
+        [ProtoMember(0)]
         public int LineFrom;
+        [ProtoMember(1)]
         public int LineTo;
+        [ProtoMember(2)]
         public string Name;
+        [ProtoMember(3)]
         public Dictionary<string, string> Params;
+        [ProtoMember(4)]
         public string RawParams;
+        [ProtoMember(5)]
         public string Comments;
-        public ASMetaKind Kind = ASMetaKind.Unknown;
+        [ProtoMember(6)]
+        public ASMetaKind Kind;
 
         public ASMetaData(string name)
         {
             Name = name.Trim();
+            Kind = ASMetaKind.Unknown;
         }
 
         public void ParseParams(string raw)
@@ -92,6 +102,7 @@ namespace ASCompletion.Model
         }
     }
 
+    [ProtoContract(SkipConstructor=true)]
     public class FileModel
     {
         static public FileModel Ignore = new FileModel();
@@ -108,21 +119,50 @@ namespace ASCompletion.Model
         public string InlinedIn;
         public List<InlineRange> InlinedRanges;
 
+        [ProtoMember(0)]
         public bool haXe;
+
+        [ProtoMember(1)]
         public int Version;
+        
+        [ProtoMember(2)]
         public string Comments;
+
+        [ProtoMember(3)]
         public string FileName;
+        
+        [ProtoMember(4)]
         public string Package;
+
+        [ProtoMember(5)]
         public string FullPackage;
+
+        [ProtoMember(6)]
         public string Module;
+        
         public bool TryAsPackage;
+
+        [ProtoMember(7)]
         public bool HasPackage;
+
+        [ProtoMember(8)]
         public int PrivateSectionIndex;
-        public Dictionary<string,Visibility> Namespaces;
+
+        [ProtoMember(9)]
+        public Dictionary<string, Visibility> Namespaces;
+
+        [ProtoMember(10)]
         public MemberList Imports;
+
+        [ProtoMember(11)]
         public List<ClassModel> Classes;
+
+        [ProtoMember(12)]
         public MemberList Members;
+
         public MemberList Regions;
+
+        [ProtoMember(13)]
         public List<ASMetaData> MetaDatas;
 
         public string BasePath

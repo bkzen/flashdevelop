@@ -219,6 +219,62 @@ namespace ASCompletion.Model
                     if (UseCache && writeCache && !stopExploration && pathModel.InUse)
                     try
                     {
+                        pathModel.ForeachFile((aFile) =>
+                        {
+                            if (aFile.Classes.Count == 0) return true;
+                            var aClass = aFile.Classes[0];
+
+                            foreach (MemberModel aMember in aClass.Members)
+                            {
+                                try
+                                {
+                                    using (var file = File.Create("c:\\temp\\prototest.buf"))
+                                    {
+                                        ProtoBuf.Serializer.Serialize(file, aMember);
+                                    }
+
+                                    MemberModel result;
+                                    using (var file = File.OpenRead("c:\\temp\\prototest.buf"))
+                                    {
+                                        result = ProtoBuf.Serializer.Deserialize<MemberModel>(file);
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                }
+                            }
+
+                            /*try
+                            {
+                                using (var file = File.Create("c:\\temp\\prototest.buf"))
+                                {
+                                    ProtoBuf.Serializer.Serialize(file, aClass);
+                                }
+
+                                ClassModel result;
+                                using (var file = File.OpenRead("c:\\temp\\prototest.buf"))
+                                {
+                                    result = ProtoBuf.Serializer.Deserialize<ClassModel>(file);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                            }*/
+
+                            /*var person = new Person {
+                                Id = 12345, Name = "Fred",
+                                Address = new Address {
+                                    Line1 = "Flat 1",
+                                    Line2 = "The Meadows"
+                                }
+                            };
+                            using (var file = File.Create("c:\\temp\\prototest.buf")) {
+                                ProtoBuf.Serializer.Serialize(file, person);
+                            }*/
+
+                            return true;
+                        });
+
                         string cacheDir = Path.GetDirectoryName(cacheFileName);
                         if (!Directory.Exists(cacheDir)) Directory.CreateDirectory(cacheDir);
                         else if (File.Exists(cacheFileName)) File.Delete(cacheFileName);

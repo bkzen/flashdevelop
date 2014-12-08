@@ -12,36 +12,65 @@ using System.Diagnostics;
 using PluginCore;
 using PluginCore.Managers;
 using ASCompletion.Context;
+using ProtoBuf;
 
 namespace ASCompletion.Model
 {
 	/// <summary>
 	/// Object representation of an Actionscript MemberModel
 	/// </summary>
+    [ProtoContract(SkipConstructor=true)]
 	public class MemberModel: ICloneable, IComparable
     {
 		public static String TypedCallbackHLStart = "<[BGCOLOR=#2F90:NORMAL]"; // <- with alpha (0x02)
 		public static String TypedCallbackHLEnd = "[/BGCOLOR]>";
 
-
+        //[ProtoMember(0, AsReference=true)]
         public FileModel InFile;
-        public bool IsPackageLevel;
 
+        [ProtoMember(1)]
+        public bool IsPackageLevel;
+        
+        [ProtoMember(2)]
 		public FlagType Flags;
+        
+        [ProtoMember(3)]
         public Visibility Access;
-		public string Namespace;
-		public string Name;
+        
+        [ProtoMember(4)]
+        public string Namespace;
+        
+        [ProtoMember(5)]
+        public string Name;
+        
+        //[ProtoMember(6, IsRequired=false)]
         public List<MemberModel> Parameters;
-		public string Type;
+        
+        [ProtoMember(7)]
+        public string Type;
+        
+        [ProtoMember(8)]
         public string Template;
-		public string Comments;
+        
+        [ProtoMember(9)]
+        public string Comments;
+        
+        [ProtoMember(10)]
         public string Value;
-		public int LineFrom;
-		public int LineTo;
+        
+        [ProtoMember(11)]
+        public int LineFrom;
+        
+        [ProtoMember(12)]
+        public int LineTo;
+
+        //[ProtoMember(13, IsRequired = false)]
         public List<ASMetaData> MetaDatas;
 
         public MemberModel()
         {
+            Parameters = new List<MemberModel>();
+            MetaDatas = new List<ASMetaData>();
         }
 
         public MemberModel(string name, string type, FlagType flags, Visibility access)
@@ -253,10 +282,13 @@ namespace ASCompletion.Model
 	/// <summary>
 	/// Strong-typed MemberModel list with special merging/searching methods
 	/// </summary>
-	public class MemberList: IEnumerable
+	[ProtoContract(SkipConstructor=true)]
+    public class MemberList: IEnumerable
 	{
-		private List<MemberModel> items;
-		private bool Sorted;
+		[ProtoMember(0)]
+        private List<MemberModel> items;
+        [ProtoMember(1)]
+        private bool Sorted;
 		
 		public IEnumerator GetEnumerator()
 		{

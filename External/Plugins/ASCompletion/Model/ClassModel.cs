@@ -5,13 +5,15 @@ using System.Text;
 using System.Text.RegularExpressions;
 using PluginCore.Localization;
 using ASCompletion.Context;
+using ProtoBuf;
 
 namespace ASCompletion.Model
 {
     /// <summary>
     /// Object representation of an Actionscript class
     /// </summary>
-    [Serializable()]
+    [ProtoContract(SkipConstructor = true)]
+    [ProtoInclude(5, typeof(MemberModel))]
     public class ClassModel: MemberModel
     {
         static public ClassModel VoidClass;
@@ -41,12 +43,19 @@ namespace ASCompletion.Model
             if (firstClass != null) extensionList.Add(firstClass);
         }
 
+        [ProtoMember(1)]
         public string Constructor;
+        
+        [ProtoMember(2)]
         public MemberList Members;
 
+        [ProtoMember(3)]
         public string ExtendsType;
-        public string IndexType;
+        
+        [ProtoMember(4)]
         public List<string> Implements;
+
+        public string IndexType;
         private WeakReference resolvedExtend;
 
         public string QualifiedName
@@ -170,6 +179,7 @@ namespace ASCompletion.Model
         {
             Name = null;
             Members = new MemberList();
+            Implements = new List<string>();
         }
 
         public bool IsVoid()
